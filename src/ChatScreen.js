@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ChatKit from '@pusher/chatkit';
 import MessageList from './components/MessageList';
+import SendMessageForm from './components/SendMessageForm';
 
 class ChatScreen extends Component{
     constructor(props)
@@ -11,24 +12,31 @@ class ChatScreen extends Component{
             currentRoom : {},
             messages: []
         }
+        this.sendMessage = this.sendMessage.bind(this)
     }
 
+    sendMessage(text)
+    {
+        this.state.currentUser.sendMessage({
+            text,
+            roomId : 7580432
+        })
+    }
     componentDidMount(){
         const chatManager = new ChatKit.ChatManager({
             instanceLocator: 'v1:us1:5ec648b6-bad9-4c16-880c-869fdf2a6814',
-            userId : this.props.currentUsername,
+            userId : window.localStorage.getItem("user"),
             tokenProvider : new ChatKit.TokenProvider({
                 url:'http://localhost:3001/authenticate'
             })
         })
-
         chatManager
             .connect()
             .then(currentUser => {
                 this.setState({currentUser});
-
+                
                 return currentUser.subscribeToRoom({
-                    roomId : 7557536,
+                    roomId : 7580432,
                     messageLimit : 100,
                     hooks : {
                         onNewMessage: message => {
@@ -88,7 +96,7 @@ class ChatScreen extends Component{
                         <MessageList 
                         messages = {this.state.messages}
                         style = {styles.chatList}/>
-
+                        <SendMessageForm sendMsg = {this.sendMessage}/>
                     </section>
 
                 </div>

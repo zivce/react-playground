@@ -2,19 +2,33 @@ import React, { Component } from 'react'
 import UsernameForm from './components/UsernameForm';
 import ChatScreen from './ChatScreen';
 import { Switch, Route} from 'react-router';
+// https://hackernoon.com/a-basic-react-redux-introductory-tutorial-adcc681eeb5e
+// https://medium.com/async-la/a-stately-guide-to-react-navigation-with-redux-1f90c872f96e
 
 class App extends Component {
   constructor()
   {
     super();
     this.state = {
-      currentUsername : ""
+      currentUsername : "",
+      container : "",
+      success : false,
+      error : false
     }
+
+    this.successToast = false
+    this.errorToast =  false
+
+
+
     this.onUsernameSubmitted = this.onUsernameSubmitted.bind(this);
   }
 
-  onUsernameSubmitted (username){
 
+  //save user into redux.. 
+  
+  onUsernameSubmitted (username){
+    let r_instance = this;
     fetch("http://localhost:3001/users",{
     method : "POST",
     headers : {
@@ -23,8 +37,20 @@ class App extends Component {
     body: JSON.stringify({username})
     })
     .then(resp=>{
+      if(resp.status === 201)
+      {
+        r_instance.setState({success : true});
+        r_instance.setState({error : false});
+      }
+      else if (resp.status === 400)
+      {
+        r_instance.setState({success : false});
+        r_instance.setState({error : true});
+      }
 
-      this.setState({
+      window.localStorage.setItem("user",username);
+
+      r_instance.setState({
         currentUsername:username
       })
     })
@@ -34,20 +60,27 @@ class App extends Component {
 }
 
   render() {
+   
+
+    
     return(
+    <div>
     <Switch>
+    
       <Route path="/chat" 
       render = {()=><ChatScreen currentUsername={this.state.currentUsername}/>}
       />
     
       <Route path="/" 
       render = {
-      
-        ()=><UsernameForm postUsername={this.onUsernameSubmitted}/>
-      
+        ()=><UsernameForm 
+        postUsername={this.onUsernameSubmitted} 
+        success= {this.state.success}
+        error = {this.state.error} />  
       }/>
-
-      </Switch>
+      
+    </Switch>
+    </div>
     )
   }
 }
