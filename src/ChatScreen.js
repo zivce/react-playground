@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import ChatKit from '@pusher/chatkit';
 import MessageList from './components/MessageList';
 import SendMessageForm from './components/SendMessageForm';
+import WhosOnlineContainer from './components/WhosOnlineList';
 
 class ChatScreen extends Component{
     constructor(props)
@@ -10,9 +11,13 @@ class ChatScreen extends Component{
         this.state = {
             currentUser : {},
             currentRoom : {},
-            messages: []
+            messages: [],
+            users : []
         }
-        this.sendMessage = this.sendMessage.bind(this)
+        this.self = this; 
+
+        this.sendMessage = this.sendMessage.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     sendMessage(text)
@@ -23,6 +28,7 @@ class ChatScreen extends Component{
         })
     }
     componentDidMount(){
+
         const chatManager = new ChatKit.ChatManager({
             instanceLocator: 'v1:us1:5ec648b6-bad9-4c16-880c-869fdf2a6814',
             userId : window.localStorage.getItem("user"),
@@ -30,9 +36,13 @@ class ChatScreen extends Component{
                 url:'http://localhost:3001/authenticate'
             })
         })
+
+
         chatManager
             .connect()
             .then(currentUser => {
+                
+
                 this.setState({currentUser});
                 
                 return currentUser.subscribeToRoom({
@@ -48,11 +58,16 @@ class ChatScreen extends Component{
                 })
 
             })
+            .then(currentRoom => {
+                this.setState({currentRoom});
+                this.setState({users:currentRoom.users})
+            })
+            
 
     }
     render(){
+        console.log("State of chat screen", this.state);
         
-        console.log("chat",this.props);
 
         const styles = {    
             container : {
@@ -82,6 +97,7 @@ class ChatScreen extends Component{
             },
             
         }
+        
         return (
             <div style={styles.container}>
                 
@@ -89,6 +105,9 @@ class ChatScreen extends Component{
                     
                     <aside style={styles.whosOnlineContainer}>
                         <h2>Whos online</h2>
+                        <WhosOnlineContainer
+                        currentUser = {this.state.currentUser.name}
+                        users = {this.state.currentRoom.users} />
                     </aside>
                     
                     <section style={styles.chatListContainer}>

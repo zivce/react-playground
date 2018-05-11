@@ -4,6 +4,9 @@ import ChatScreen from './ChatScreen';
 import { Switch, Route} from 'react-router';
 // https://hackernoon.com/a-basic-react-redux-introductory-tutorial-adcc681eeb5e
 // https://medium.com/async-la/a-stately-guide-to-react-navigation-with-redux-1f90c872f96e
+// import {ToastContainer} from 'react-toastr';
+import toastrcss from './toastr.css';
+import toastr from 'toastr';
 
 class App extends Component {
   constructor()
@@ -16,15 +19,14 @@ class App extends Component {
       error : false
     }
 
-    this.successToast = false
-    this.errorToast =  false
-
-
+    this.container = null,
 
     this.onUsernameSubmitted = this.onUsernameSubmitted.bind(this);
   }
 
-
+  func(){
+    // this.toastr.clear();
+  }
   //save user into redux.. 
   
   onUsernameSubmitted (username){
@@ -39,13 +41,15 @@ class App extends Component {
     .then(resp=>{
       if(resp.status === 201)
       {
-        r_instance.setState({success : true});
-        r_instance.setState({error : false});
+        toastr.success("Proceed to /chat","Welcome",{
+          closeOnHover:true
+        })
       }
       else if (resp.status === 400)
       {
-        r_instance.setState({success : false});
-        r_instance.setState({error : true});
+        toastr.error("User exists","Error!",{
+          closeOnHover:true
+        })
       }
 
       window.localStorage.setItem("user",username);
@@ -60,11 +64,11 @@ class App extends Component {
 }
 
   render() {
-   
-
     
     return(
     <div>
+
+    {this.toastr}
     <Switch>
     
       <Route path="/chat" 

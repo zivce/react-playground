@@ -14,7 +14,7 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
-    "react-toastr": "^3.0.0"
+    "toastr": "^2.1.4"
   },
   "devDependencies": {
     "concurrently": "^3.5.1"
