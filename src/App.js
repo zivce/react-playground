@@ -47,9 +47,9 @@ class App extends Component {
           closeOnHover:true
         })
       }
-      else if (resp.status === 400)
+      else if (resp.status === 409)
       {
-        toastr.error("User exists","Error!",{
+        toastr.success("Logged in!","Success!",{
           closeOnHover:true
         })
       }
@@ -70,7 +70,6 @@ class App extends Component {
     return(
     <div>
 
-    {this.toastr}
     <Switch>
     
       <Route path="/chat" 

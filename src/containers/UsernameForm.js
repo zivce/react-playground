@@ -5,6 +5,8 @@ import {connect} from 'react-redux';
 import userSigned from '../components/actions/user_signed.action';
 import getUser from '../components/actions/get_user.action';
 
+import toastrcss from '../toastr.css';
+import toastr from 'toastr';
 class UsernameForm extends Component{
     constructor(props)
     {
@@ -36,7 +38,11 @@ class UsernameForm extends Component{
 
         //Action dispatch here.
         this.props.userSignedLocal(this.state.username);
-    }
+
+        let user = this.state.username;
+        window.localStorage.setItem("user",user);
+        this.props.postUsername(user);
+    }   
 
     onChange($event)
     {
@@ -72,7 +78,7 @@ class UsernameForm extends Component{
 }
 function mapStateToProps(state) {
     return {
-      current_user_local: state.current_user
+      current_user_local: state.currentuser.py
     };
   }
 

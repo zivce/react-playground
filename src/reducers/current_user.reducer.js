@@ -3,7 +3,10 @@
  */
 
 
-export default function(state = {},action) {
+const initState = 
+{};
+
+export default function(state = initState,action) {
     
     //Guard.
     if( typeof state === 'undefined')
@@ -15,7 +18,8 @@ export default function(state = {},action) {
     switch(action.type)
     {
         case 'USER_SIGNED' :
-            const nextState = {...state,  currentuser :  action.payload};
+            let py = action.payload
+            const nextState = {...state, py};
             return state =  nextState;
         case 'GET_USER' : 
             return state;

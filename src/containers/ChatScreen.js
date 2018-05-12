@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import ChatKit from '@pusher/chatkit';
 import MessageList from '../components/MessageList';
 import SendMessageForm from '../components/SendMessageForm';
-import WhosOnlineContainer from '../components/WhosOnlineList';
+import WhosOnlineContainer from '../containers/WhosOnlineList';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+
 import getUser from '../components/actions/get_user.action';
+import signedUser from '../components/actions/user_signed.action';
 
 class ChatScreen extends Component{
     constructor(props)
@@ -19,7 +21,7 @@ class ChatScreen extends Component{
             users : [],
             chat_manager : null
         }
-        this.currentUser = this.props.getUserLocal();
+        
         this.sendMessage = this.sendMessage.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -32,21 +34,25 @@ class ChatScreen extends Component{
         })
     }
     componentDidMount(){
-        console.log(this.props.current_user_local);
+        let user = localStorage.getItem("user");
+        this.props.signedUser(user);
 
         const chatManager = new ChatKit.ChatManager({
             instanceLocator: 'v1:us1:5ec648b6-bad9-4c16-880c-869fdf2a6814',
-            userId : this.state.currentUser,
+            userId : user,
             tokenProvider : new ChatKit.TokenProvider({
                 url:'http://localhost:3001/authenticate'
             })
         })
+
         this.setState({chat_manager : chatManager})
 
         chatManager
             .connect()
             .then(currentUser => {
+                
                 this.setState({currentUser});
+
                 return currentUser.subscribeToRoom({
                     roomId : 7580432,
                     messageLimit : 100,
@@ -103,6 +109,8 @@ class ChatScreen extends Component{
             
         }
         
+
+
         return (
             <div style={styles.container}>
                 
@@ -142,7 +150,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        getUserLocal : getUser
+        signedUser,
+       getUser
     },dispatch)
 }
 

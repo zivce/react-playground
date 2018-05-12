@@ -5,22 +5,23 @@ import './index.css'
 
 import { BrowserRouter } from 'react-router-dom';
 import {Provider} from 'react-redux';
-import {createStore} from 'redux';
+import {createStore , combineReducers, applyMiddleware,compose } from 'redux';
 import reducers from './reducers/index';
 
-const initState = 
-    {};
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+
+
 
 const store = createStore (
-    reducers,initState,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-    
+    reducers,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
 
 ReactDOM.render(
 
 <Provider store = {store}>
-    <BrowserRouter>
+    <BrowserRouter >
         <App />
     </BrowserRouter>
 </Provider>

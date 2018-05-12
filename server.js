@@ -35,7 +35,7 @@ app.post('/users',(req,res)=>{
 
       if(err.error === 'services/chatkit/user_already_exists')
       {
-        res.sendStatus(400);
+        res.sendStatus(409);
       }
       else
       {
