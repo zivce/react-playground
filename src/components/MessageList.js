@@ -1,6 +1,10 @@
 import React,{Component} from 'react';
 
 class MessageList extends Component{
+   lastMessage(){
+       
+   }
+
     render(){
         const styles = {
             container:{
@@ -30,7 +34,11 @@ class MessageList extends Component{
                 <ul style = {styles.ul}>
                     {
                         this.props.messages.map((message,index)=>(
-                            <li key={index} style={styles.li}>
+
+                            <li 
+                            ref = {this.lastMessage}
+                            key={index} 
+                            style={styles.li}>
                                 <div>
                                     <span style = {styles.senderUsername}>
                                     {message.senderId}

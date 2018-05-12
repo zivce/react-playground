@@ -1,8 +1,12 @@
 import React, {Component} from 'react';
 import ChatKit from '@pusher/chatkit';
-import MessageList from './components/MessageList';
-import SendMessageForm from './components/SendMessageForm';
-import WhosOnlineContainer from './components/WhosOnlineList';
+import MessageList from '../components/MessageList';
+import SendMessageForm from '../components/SendMessageForm';
+import WhosOnlineContainer from '../components/WhosOnlineList';
+
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import getUser from '../components/actions/get_user.action';
 
 class ChatScreen extends Component{
     constructor(props)
@@ -12,10 +16,10 @@ class ChatScreen extends Component{
             currentUser : {},
             currentRoom : {},
             messages: [],
-            users : []
+            users : [],
+            chat_manager : null
         }
-        this.self = this; 
-
+        this.currentUser = this.props.getUserLocal();
         this.sendMessage = this.sendMessage.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
     }
@@ -28,27 +32,29 @@ class ChatScreen extends Component{
         })
     }
     componentDidMount(){
+        console.log(this.props.current_user_local);
 
         const chatManager = new ChatKit.ChatManager({
             instanceLocator: 'v1:us1:5ec648b6-bad9-4c16-880c-869fdf2a6814',
-            userId : window.localStorage.getItem("user"),
+            userId : this.state.currentUser,
             tokenProvider : new ChatKit.TokenProvider({
                 url:'http://localhost:3001/authenticate'
             })
         })
-
+        this.setState({chat_manager : chatManager})
 
         chatManager
             .connect()
             .then(currentUser => {
-                
-
                 this.setState({currentUser});
-                
                 return currentUser.subscribeToRoom({
                     roomId : 7580432,
                     messageLimit : 100,
                     hooks : {
+                        onUserCameOnline : ()=> this.forceUpdate(),
+                        onUserWentOffline : () => this.forceUpdate(),
+                        onUserJoined : () => this.forceUpdate(),
+
                         onNewMessage: message => {
                             this.setState({
                                 messages: [...this.state.messages,message]
@@ -66,9 +72,8 @@ class ChatScreen extends Component{
 
     }
     render(){
-        console.log("State of chat screen", this.state);
         
-
+        
         const styles = {    
             container : {
                 height: "100vh",
@@ -106,15 +111,18 @@ class ChatScreen extends Component{
                     <aside style={styles.whosOnlineContainer}>
                         <h2>Whos online</h2>
                         <WhosOnlineContainer
+                        current_user = {this.state.currentUser}
+                        roomname = {this.state.currentRoom.name}
                         currentUser = {this.state.currentUser.name}
                         users = {this.state.currentRoom.users} />
                     </aside>
                     
-                    <section style={styles.chatListContainer}>
+                    <section style={styles.chatListContainer} ref="chat_list">
                         
                         <MessageList 
                         messages = {this.state.messages}
                         style = {styles.chatList}/>
+                       
                         <SendMessageForm sendMsg = {this.sendMessage}/>
                     </section>
 
@@ -126,4 +134,16 @@ class ChatScreen extends Component{
     }
 }
 
-export default ChatScreen;
+function mapStateToProps(state) {
+    return {
+      current_user_local: state.current_user
+    };
+  }
+function mapDispatchToProps(dispatch)
+{
+    return bindActionCreators({
+        getUserLocal : getUser
+    },dispatch)
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(ChatScreen);

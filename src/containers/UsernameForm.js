@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
 
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import userSigned from '../components/actions/user_signed.action';
+import getUser from '../components/actions/get_user.action';
 
 class UsernameForm extends Component{
     constructor(props)
@@ -29,8 +33,9 @@ class UsernameForm extends Component{
     {
 
         $event.preventDefault();
-        this.props.postUsername(this.state.username);
-        
+
+        //Action dispatch here.
+        this.props.userSignedLocal(this.state.username);
     }
 
     onChange($event)
@@ -65,5 +70,17 @@ class UsernameForm extends Component{
     }
 
 }
+function mapStateToProps(state) {
+    return {
+      current_user_local: state.current_user
+    };
+  }
 
-export default UsernameForm;
+function mapDispatchToProps(dispatch)
+{
+    return bindActionCreators({
+        userSignedLocal : userSigned,
+        getUser
+    },dispatch)
+}
+export default connect(mapStateToProps,mapDispatchToProps)(UsernameForm);

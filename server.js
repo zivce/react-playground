@@ -15,6 +15,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors())
 
+app.get('/getallrooms',)
+
+
 /**
  * Used for sending username to server
  */
@@ -23,12 +26,10 @@ app.post('/users',(req,res)=>{
   const {username}  =req.body;
   
   chatkit
-    
     .createUser({
       id:username,
       name:username
     })
-
     .then(()=>res.sendStatus(201))
     .catch((err)=>{
 
@@ -43,6 +44,9 @@ app.post('/users',(req,res)=>{
 
     })
 })
+
+
+
 
 /**
  * Used for auth

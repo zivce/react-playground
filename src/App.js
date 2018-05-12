@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import UsernameForm from './components/UsernameForm';
-import ChatScreen from './ChatScreen';
+import UsernameForm from './containers/UsernameForm';
+import ChatScreen from './containers/ChatScreen';
 import { Switch, Route} from 'react-router';
+
 // https://hackernoon.com/a-basic-react-redux-introductory-tutorial-adcc681eeb5e
 // https://medium.com/async-la/a-stately-guide-to-react-navigation-with-redux-1f90c872f96e
 // import {ToastContainer} from 'react-toastr';
+
 import toastrcss from './toastr.css';
 import toastr from 'toastr';
 
@@ -19,7 +21,7 @@ class App extends Component {
       error : false
     }
 
-    this.container = null,
+    this.container = null;
 
     this.onUsernameSubmitted = this.onUsernameSubmitted.bind(this);
   }
