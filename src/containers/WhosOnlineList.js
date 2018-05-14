@@ -57,6 +57,9 @@ class WhosOnlineList extends Component{
     {
         this.props.refreshMsgs();
         debugger;
+
+        this.props.currRoom(roomid);
+
         this.props.current_user.subscribeToRoom({
             roomId : roomid,
             hooks : {
@@ -91,7 +94,6 @@ class WhosOnlineList extends Component{
             }).then(room => {
                 
                 th.props.addRoom(room);
-                debugger;
                 this.props.refreshMsgs();
 
                 th.props.current_user.joinRoom({
@@ -178,9 +180,6 @@ class WhosOnlineList extends Component{
                             subscribe
                         </button>
                         
-                         {/* <button onClick={this.changeRoom(room.id)}>
-                            subscribe
-                        </button> */}
                     </div>
                     
                     <div 
@@ -267,7 +266,8 @@ class WhosOnlineListItem extends Component {
 function mapStateToProps(state) {
     return {
       rooms: state.rooms,
-      messages : state.messages
+      messages : state.messages,
+      curr_room : state.currentroom
     };
   }
 

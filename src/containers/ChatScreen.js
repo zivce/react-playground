@@ -10,6 +10,7 @@ import {connect} from 'react-redux';
 import signedUser from '../components/actions/user_signed.action';
 import refreshMsgs from '../components/actions/refresh_messages.action';
 import addMsgs from '../components/actions/add_messages.action';
+import currRoom from '../components/actions/current_room.action';
 
 
 class ChatScreen extends Component{
@@ -33,7 +34,7 @@ class ChatScreen extends Component{
     {
         this.state.currentUser.sendMessage({
             text,
-            roomId : 7580432
+            roomId : this.props.curr_room
         })
     }
     componentDidMount(){
@@ -58,14 +59,15 @@ class ChatScreen extends Component{
                 
                 // this.props.refreshMsgs();
                 
-                debugger;
                 
-                this.setState({currentRoom : currentUser.rooms[0]})
+                // this.setState({currentRoom : currentUser.rooms[0]})
+                console.log(currentUser.rooms[0]);
+                this.props.currRoom(currentUser.rooms[0].id);
 
 
-
-                return currentUser.subscribeToRoom({
-                    roomId : this.state.currentRoom.id,
+                return currentUser
+                .subscribeToRoom({
+                    roomId : this.props.curr_room,
                     messageLimit : 100,
                     hooks : {
                         onUserCameOnline : ()=> this.forceUpdate(),
@@ -81,6 +83,7 @@ class ChatScreen extends Component{
                         }
                     }
                 })
+               
 
             })
             .then(currentRoom => {
@@ -159,12 +162,14 @@ class ChatScreen extends Component{
 function mapStateToProps(state) {
     return {
       current_user_local: state.current_user,
-      messages : state.messages
+      messages : state.messages,
+      curr_room : state.currentroom
     };
   }
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
+        currRoom,
         signedUser,
         addMsgs,
         refreshMsgs
