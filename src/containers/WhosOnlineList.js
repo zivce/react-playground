@@ -19,8 +19,24 @@ class WhosOnlineList extends Component{
         this.createRoom = this.createRoom.bind(this);
         this.addRoom = this.addRoom.bind(this);
         this.new_room = ""
+
+        this.fetchMessages = this.fetchMessages.bind(this);
+
     }
 
+    fetchMessages(room)
+    {
+        this.props.current_user.subscribeToRoom({
+            roomId : room.id,
+            hooks : {
+                onNewMessage : message => {
+                    this.props.chatscreenmessages.setState({
+                        msgs : [...this.props.chatscreenmessages.messages , message]
+                    })
+                }
+            }
+        })
+    }
     createRoom(){
        this.setState({room_setup:true})
     }
@@ -37,6 +53,7 @@ class WhosOnlineList extends Component{
             });
             return;
         }
+
         let th = this;
         this.props.current_user.createRoom({
             name: arg_name,
@@ -113,28 +130,35 @@ class WhosOnlineList extends Component{
                     {this.rooms.map (room => (
 
                     
-                    <ul>
-                    <h1
-                    style = {styles.roomstyle}
-                    >
-                    Room &nbsp;
-                    {room.name}</h1>    
+                    <ul key = {room.id}>
+                    <div>
+                        <h1
+                        style = {styles.roomstyle}
+                        >
+                        Room &nbsp;
+                        {room.name}</h1> 
+                        <button onClick={this.fetchMessages(room.id)}>
+                            subscribe
+                        </button>
+                    </div>
                     {
-                    this.props.users.map((user,index)=>{
-                        if(user.id === this.props.currentUser){
+                    room.userIds.map((user,index)=>{
+                        if(user === this.props.currentUser){
                             return (
+                                
                                 <WhosOnlineListItem key = {index} 
                                 presenceState = "online">
-                                {user.name} (You)
+
+                                {user} (You)
                                 </WhosOnlineListItem>)
                         }
 
                         return (
                             <WhosOnlineListItem 
-                            key = {index} 
-                            presenceState = {user.presence.state}>
+                            key = {index}
+                            presenceState = {room.userStore.presenceStore.store[user].state}>
                             
-                            {user.name}
+                            {user}
                             
                             </WhosOnlineListItem>)
                     })
@@ -192,7 +216,8 @@ class WhosOnlineListItem extends Component {
 
 function mapStateToProps(state) {
     return {
-      rooms: state.rooms
+      rooms: state.rooms,
+      messages : state.msgs
     };
   }
 

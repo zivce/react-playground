@@ -93,6 +93,7 @@ class ChatScreen extends Component{
             },
             
             whosOnlineContainer : {
+                overflow : "auto",
                 width: "300px",
                 flex : "none",
                 padding : 20,
