@@ -6,7 +6,7 @@ import msgsAdd from './msgsadd.reducer';
 const rootReducer = combineReducers({
     currentuser : currentUser,
     rooms : roomsAdd,
-    msgs : msgsAdd
+    messages : msgsAdd
 })
 
 export default rootReducer;

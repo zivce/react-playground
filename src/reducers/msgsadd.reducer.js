@@ -17,9 +17,12 @@ export default function(state = initState,action) {
     //Modify state.
     switch(action.type)
     {
+        case 'REFRESH_MESSAGES' :
+            let freshState = []; 
+            return freshState;
         case 'ADD_MESSAGES' :
             let msg = action.message
-            const nextState = {...state, msg};
+            const nextState = [...state, msg];
             return state = nextState;
         default:
             return state;

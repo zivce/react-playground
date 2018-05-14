@@ -2,7 +2,12 @@ import React, {Component} from 'react';
 import RoomSetup from '../components/RoomSetup';
 import toastrcss from '../toastr.css';
 import toastr from 'toastr';
+
 import addRoom from '../components/actions/new_room.action';
+import addMsgs from '../components/actions/add_messages.action';
+import refreshMsgs from '../components/actions/refresh_messages.action';
+import currRoom from '../components/actions/current_room.action';
+
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -11,9 +16,11 @@ class WhosOnlineList extends Component{
 
     constructor(props){
         super(props);
+        
         this.state = {
-            room_setup : false
+            room_setup : false,
         }
+
         this.rooms = null;
         this.run  = 1;
         this.createRoom = this.createRoom.bind(this);
@@ -21,18 +28,40 @@ class WhosOnlineList extends Component{
         this.new_room = ""
 
         this.fetchMessages = this.fetchMessages.bind(this);
-
+        this.expandRoom = this.expandRoom.bind(this);
     }
 
-    fetchMessages(room)
+
+    expandRoom ( $event,   roomid )
     {
+        console.log($event.target);
+        console.log($event.target.parentNode.parentNode);
+        let container = $event.target.parentNode.parentNode;
+        let room_users = container.querySelector('.room_container');
+
+        let closed_users_container = room_users.style.display === "none";
+        if(closed_users_container)
+            room_users.style.display = "block";
+        else 
+            room_users.style.display = "none";
+    } 
+
+
+    changeRoom ( roomid )
+    {   
+        this.props.currRoom(roomid);
+    }
+
+
+    fetchMessages(roomid)
+    {
+        // this.props.refreshMsgs();
+
         this.props.current_user.subscribeToRoom({
-            roomId : room.id,
+            roomId : roomid,
             hooks : {
                 onNewMessage : message => {
-                    this.props.chatscreenmessages.setState({
-                        msgs : [...this.props.chatscreenmessages.messages , message]
-                    })
+                    this.props.addMsgs(message);
                 }
             }
         })
@@ -60,15 +89,16 @@ class WhosOnlineList extends Component{
             private: true,
             addUserIds: users
             }).then(room => {
-                console.log(room);
                 
                 th.props.addRoom(room);
+                debugger;
+                this.props.refreshMsgs();
 
                 th.props.current_user.joinRoom({
                     roomId : room.id,
                     hooks : {
                         onNewMessage: message => {
-                            console.log("new msg",message);
+                            this.props.addMsgs(message);
                         }
                     }
                 })
@@ -110,7 +140,10 @@ class WhosOnlineList extends Component{
             },
             new_room_btn : {
                 padding: "5%"
-            } 
+            },
+            room_container : {
+                display: "none"
+            }
         }
         let RoomSetupModal = null;
 
@@ -128,44 +161,60 @@ class WhosOnlineList extends Component{
             return ( 
                 <div>
                     {this.rooms.map (room => (
-
                     
                     <ul key = {room.id}>
-                    <div>
+                    <div
+                    className = "room_name"
+                    >
                         <h1
+                        onClick = { (e) => this.expandRoom(e,room.id)}
                         style = {styles.roomstyle}
                         >
                         Room &nbsp;
                         {room.name}</h1> 
-                        <button onClick={this.fetchMessages(room.id)}>
+                        <button 
+                        onClick={() => this.fetchMessages(room.id)}>
+                        
                             subscribe
                         </button>
-                    </div>
-                    {
-                    room.userIds.map((user,index)=>{
-                        if(user === this.props.currentUser){
-                            return (
-                                
-                                <WhosOnlineListItem key = {index} 
-                                presenceState = "online">
-
-                                {user} (You)
-                                </WhosOnlineListItem>)
-                        }
-
-                        return (
-                            <WhosOnlineListItem 
-                            key = {index}
-                            presenceState = {room.userStore.presenceStore.store[user].state}>
-                            
-                            {user}
-                            
-                            </WhosOnlineListItem>)
-                    })
-
                         
-                    }
+                         {/* <button onClick={this.changeRoom(room.id)}>
+                            subscribe
+                        </button> */}
+                    </div>
                     
+                    <div 
+                    className="room_container"
+                    style = {styles.room_container}
+
+                    >
+
+                        {
+                        room.userIds.map((user,index)=>{
+                            if(user === this.props.currentUser){
+                                return (
+                                    
+                                    <WhosOnlineListItem key = {index} 
+                                    presenceState = "online">
+
+                                    {user} (You)
+                                    </WhosOnlineListItem>)
+                            }
+
+                            return (
+                                <WhosOnlineListItem 
+                                key = {index}
+                                presenceState = {room.userStore.presenceStore.store[user].state}>
+                                
+                                {user}
+                                
+                                </WhosOnlineListItem>)
+                        })
+
+                            
+                        }
+                        
+                    </div>
 
                 </ul>
                 ))}
@@ -195,6 +244,7 @@ class WhosOnlineListItem extends Component {
             div : {
                 width : 20,
                 height : 20,
+                borderRadius : "50%",
                 marginRight : 15
             }
         }
@@ -217,14 +267,17 @@ class WhosOnlineListItem extends Component {
 function mapStateToProps(state) {
     return {
       rooms: state.rooms,
-      messages : state.msgs
+      messages : state.messages
     };
   }
 
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-       addRoom
+        currRoom,
+       addRoom,
+       refreshMsgs,
+       addMsgs
     },dispatch)
 }
 export default connect(mapStateToProps,mapDispatchToProps)(WhosOnlineList);

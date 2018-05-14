@@ -3,7 +3,6 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import userSigned from '../components/actions/user_signed.action';
-import getUser from '../components/actions/get_user.action';
 
 import toastrcss from '../toastr.css';
 import toastr from 'toastr';
@@ -86,7 +85,6 @@ function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
         userSignedLocal : userSigned,
-        getUser
     },dispatch)
 }
 export default connect(mapStateToProps,mapDispatchToProps)(UsernameForm);

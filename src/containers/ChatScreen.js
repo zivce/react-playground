@@ -7,8 +7,10 @@ import WhosOnlineContainer from '../containers/WhosOnlineList';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import getUser from '../components/actions/get_user.action';
 import signedUser from '../components/actions/user_signed.action';
+import refreshMsgs from '../components/actions/refresh_messages.action';
+import addMsgs from '../components/actions/add_messages.action';
+
 
 class ChatScreen extends Component{
     constructor(props)
@@ -17,6 +19,7 @@ class ChatScreen extends Component{
         this.state = {
             currentUser : {},
             currentRoom : {},
+            curr_room_id : null,
             messages: [],
             users : [],
             chat_manager : null
@@ -52,7 +55,7 @@ class ChatScreen extends Component{
             .then(currentUser => {
                 
                 this.setState({currentUser});
-
+                // this.props.refreshMsgs();
                 return currentUser.subscribeToRoom({
                     roomId : 7580432,
                     messageLimit : 100,
@@ -62,9 +65,10 @@ class ChatScreen extends Component{
                         onUserJoined : () => this.forceUpdate(),
 
                         onNewMessage: message => {
-                            this.setState({
-                                messages: [...this.state.messages,message]
-                            })
+                            this.props.addMsgs(message);
+                            // this.setState({
+                            //     messages : [...this.state.messages, message]
+                            // })
                         }
                     }
                 })
@@ -120,6 +124,7 @@ class ChatScreen extends Component{
                     <aside style={styles.whosOnlineContainer}>
                         <h2>Whos online</h2>
                         <WhosOnlineContainer
+                        room = {this.state.curr_room_id}
                         current_user = {this.state.currentUser}
                         roomname = {this.state.currentRoom.name}
                         currentUser = {this.state.currentUser.name}
@@ -129,7 +134,6 @@ class ChatScreen extends Component{
                     <section style={styles.chatListContainer} ref="chat_list">
                         
                         <MessageList 
-                        messages = {this.state.messages}
                         style = {styles.chatList}/>
                        
                         <SendMessageForm sendMsg = {this.sendMessage}/>
@@ -145,14 +149,16 @@ class ChatScreen extends Component{
 
 function mapStateToProps(state) {
     return {
-      current_user_local: state.current_user
+      current_user_local: state.current_user,
+      messages : state.messages
     };
   }
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
         signedUser,
-       getUser
+        addMsgs,
+        refreshMsgs
     },dispatch)
 }
 
