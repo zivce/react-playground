@@ -34,12 +34,12 @@ class WhosOnlineList extends Component{
 
     expandRoom ( $event,   roomid )
     {
-        console.log($event.target);
-        console.log($event.target.parentNode.parentNode);
         let container = $event.target.parentNode.parentNode;
+
         let room_users = container.querySelector('.room_container');
 
         let closed_users_container = room_users.style.display === "none";
+
         if(closed_users_container)
             room_users.style.display = "block";
         else 
@@ -55,8 +55,8 @@ class WhosOnlineList extends Component{
 
     fetchMessages(roomid)
     {
-        // this.props.refreshMsgs();
-
+        this.props.refreshMsgs();
+        debugger;
         this.props.current_user.subscribeToRoom({
             roomId : roomid,
             hooks : {

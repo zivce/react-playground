@@ -18,7 +18,7 @@ class ChatScreen extends Component{
         super(props);
         this.state = {
             currentUser : {},
-            currentRoom : {},
+            currentRoom : new Number(),
             curr_room_id : null,
             messages: [],
             users : [],
@@ -39,7 +39,7 @@ class ChatScreen extends Component{
     componentDidMount(){
         let user = localStorage.getItem("user");
         this.props.signedUser(user);
-
+        
         const chatManager = new ChatKit.ChatManager({
             instanceLocator: 'v1:us1:5ec648b6-bad9-4c16-880c-869fdf2a6814',
             userId : user,
@@ -55,9 +55,17 @@ class ChatScreen extends Component{
             .then(currentUser => {
                 
                 this.setState({currentUser});
+                
                 // this.props.refreshMsgs();
+                
+                debugger;
+                
+                this.setState({currentRoom : currentUser.rooms[0]})
+
+
+
                 return currentUser.subscribeToRoom({
-                    roomId : 7580432,
+                    roomId : this.state.currentRoom.id,
                     messageLimit : 100,
                     hooks : {
                         onUserCameOnline : ()=> this.forceUpdate(),
@@ -66,6 +74,7 @@ class ChatScreen extends Component{
 
                         onNewMessage: message => {
                             this.props.addMsgs(message);
+
                             // this.setState({
                             //     messages : [...this.state.messages, message]
                             // })
