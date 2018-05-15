@@ -3,14 +3,20 @@ import toastrcss from '../toastr.css';
 import toastr from 'toastr';
 
 
+
+//B3 comps
+import Button from 'react-bootstrap/lib/Button';
+
 export default class RoomSetup extends Component{
     constructor(props)
     {
         super(props);
         this.room_name = "";
         this.room_input_users = [];
+        
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleRoomNameChange = this.handleRoomNameChange.bind(this);
+        
         this.submitInfo = this.submitInfo.bind(this);
 
     }
@@ -58,22 +64,35 @@ export default class RoomSetup extends Component{
                 padding: "4%"
             },
             room_setup : {
-                width: "200px",
+                width: "20vw",
                 height: "fit-content",
                 position: "absolute",
-                top: "40px",
-                left: "40px",
-                padding: "1%",
-                background: "#578d8d"
+                top: "2vw",
+                left: "23vw",
+                padding: "2%",
+                background: "rgb(44, 48, 59)"
+            },
+            select_users : {
+                margin: "0.8vw",
+            },
+            users_container : {
+                height: "40vh",
+                overflow : "auto"
+            },
+            check_users : {
+                textAlign : "center",
+                margin: "4px",
+                verticalAlign: "middle"
             }
         }
         let users = null;
 
         let users_check = this.props.users.map(user=>(
-                <div key = {user.id}>
+                <div key = {user.id} style={styles.select_users}> 
 
                     <input 
                     onInput = {this.handleInputChange}
+                    style = {styles.check_users}
                     
                     name={user.id} 
                     value={user.name}
@@ -86,19 +105,24 @@ export default class RoomSetup extends Component{
 
         return (
             <div style={styles.room_setup}>
-                <h1>Create room</h1>
+                <h3>Create room</h3>
                 <div>
-                    <input type="text" 
+                    <input 
+                    type="text" 
                     onInput={this.handleRoomNameChange}/>
-                    {users_check}
+                    
+                    <div style={styles.users_container}>
+                        {users_check}                    
+                    </div>
+                
                 </div>
                 
-                <button
+                <Button
+                bsStyle="success"
                 type="submit"
-                style = {styles.btn_input} 
                 onClick={this.submitInfo}>
-                Submit
-                </button>
+                Create room
+                </Button>
             </div>
         )
     }

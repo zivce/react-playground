@@ -18,5 +18,8 @@ body {
   display:  none;
 }
 .room_name {
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   cursor: pointer;
 }

@@ -25,6 +25,7 @@ class ChatScreen extends Component{
             users : [],
             chat_manager : null
         }
+        this.instance_locator = "v1:us1:5ec648b6-bad9-4c16-880c-869fdf2a6814";
         
         this.sendMessage = this.sendMessage.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -42,7 +43,7 @@ class ChatScreen extends Component{
         this.props.signedUser(user);
         
         const chatManager = new ChatKit.ChatManager({
-            instanceLocator: 'v1:us1:5ec648b6-bad9-4c16-880c-869fdf2a6814',
+            instanceLocator: this.instance_locator,
             userId : user,
             tokenProvider : new ChatKit.TokenProvider({
                 url:'http://localhost:3001/authenticate'
@@ -56,18 +57,22 @@ class ChatScreen extends Component{
             .then(currentUser => {
                 
                 this.setState({currentUser});
-                
-                // this.props.refreshMsgs();
-                
-                
-                // this.setState({currentRoom : currentUser.rooms[0]})
-                console.log(currentUser.rooms[0]);
-                this.props.currRoom(currentUser.rooms[0].id);
 
-
+                let no_created_rooms = currentUser.rooms.length === 0;
+                
+                if(no_created_rooms)
+                {
+                    this.props.currRoom(7580432)
+                }
+                else
+                {
+                    
+                    this.props.currRoom(currentUser.rooms[0].id);
+                }
+               
                 return currentUser
                 .subscribeToRoom({
-                    roomId : this.props.curr_room,
+                    roomId : this.props.curr_room ,
                     messageLimit : 100,
                     hooks : {
                         onUserCameOnline : ()=> this.forceUpdate(),
@@ -76,10 +81,6 @@ class ChatScreen extends Component{
 
                         onNewMessage: message => {
                             this.props.addMsgs(message);
-
-                            // this.setState({
-                            //     messages : [...this.state.messages, message]
-                            // })
                         }
                     }
                 })
@@ -87,6 +88,7 @@ class ChatScreen extends Component{
 
             })
             .then(currentRoom => {
+                
                 this.setState({currentRoom});
                 this.setState({users:currentRoom.users})
             })

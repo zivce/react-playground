@@ -8,6 +8,15 @@ import addMsgs from '../components/actions/add_messages.action';
 import refreshMsgs from '../components/actions/refresh_messages.action';
 import currRoom from '../components/actions/current_room.action';
 
+//Font awesome icons
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import faDoorClosed from '@fortawesome/fontawesome-free-solid/faDoorClosed'
+import faDoorOpen from '@fortawesome/fontawesome-free-solid/faDoorOpen'
+
+
+//B3 comps
+import Button from 'react-bootstrap/lib/Button';
+
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -29,6 +38,9 @@ class WhosOnlineList extends Component{
 
         this.fetchMessages = this.fetchMessages.bind(this);
         this.expandRoom = this.expandRoom.bind(this);
+
+        
+
     }
 
 
@@ -56,8 +68,6 @@ class WhosOnlineList extends Component{
     fetchMessages(roomid)
     {
         this.props.refreshMsgs();
-        debugger;
-
         this.props.currRoom(roomid);
 
         this.props.current_user.subscribeToRoom({
@@ -111,7 +121,10 @@ class WhosOnlineList extends Component{
                     closeOnHover:true
                   })
                
+                
                 //Setting component state will trigger repaint
+                //repaint gets new rooms added to the list.
+
                 this.setState({room_setup : false});
 
             })
@@ -140,11 +153,19 @@ class WhosOnlineList extends Component{
                 color : "#6ab902",
                 padding: "3%"
             },
+            openedroomstyle : {
+                color : "#fbfbfb",
+                padding: "3%"
+            },
             new_room_btn : {
                 padding: "5%"
             },
             room_container : {
                 display: "none"
+            },
+            fadoor : {
+               verticalAlign: "middle",
+                margin: "35px auto auto 6px",
             }
         }
         let RoomSetupModal = null;
@@ -157,28 +178,38 @@ class WhosOnlineList extends Component{
                 users = {this.props.users}/>
             
         }
+
+        // const RoomNotOpened = 
+        
+        // const RoomOpened = <FontAwesomeIcon icon={faDoorOpen} />
+        
+    
+
+
         if(this.props.users)
         {
 
             return ( 
                 <div>
+                    <Button bsStyle="primary"  onClick = {this.createRoom}>Add new room </Button>
                     {this.rooms.map (room => (
                     
                     <ul key = {room.id}>
                     <div
                     className = "room_name"
                     >
-                        <h1
+                        <h3
                         onClick = { (e) => this.expandRoom(e,room.id)}
-                        style = {styles.roomstyle}
+                        style = {(this.props.curr_room === room.id) ? styles.openedroomstyle : styles.roomstyle}
                         >
-                        Room &nbsp;
-                        {room.name}</h1> 
-                        <button 
-                        onClick={() => this.fetchMessages(room.id)}>
+                        +
+                        {room.name}</h3> 
                         
-                            subscribe
-                        </button>
+
+                        {(this.props.curr_room === room.id) 
+                        ? <FontAwesomeIcon icon={faDoorOpen} style={styles.fadoor}/>
+                         :<FontAwesomeIcon style={styles.fadoor} onClick={() => this.fetchMessages(room.id)} icon={faDoorClosed} /> }
+
                         
                     </div>
                     
@@ -217,7 +248,7 @@ class WhosOnlineList extends Component{
 
                 </ul>
                 ))}
-                <button onClick = {this.createRoom}>Add new room </button>
+                
 
                 {RoomSetupModal}
             </div>

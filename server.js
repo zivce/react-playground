@@ -23,7 +23,7 @@ app.get('/getallrooms',)
  */
 
 app.post('/users',(req,res)=>{
-  const {username}  =req.body;
+  const {username}  = req.body;
   
   chatkit
     .createUser({
