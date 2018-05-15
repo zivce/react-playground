@@ -72,9 +72,7 @@ class App extends Component {
 
     <Switch>
     
-      <Route path="/chat" 
-      render = {()=><ChatScreen currentUsername={this.state.currentUsername}/>}
-      />
+      <Route path="/chat/:user_name" component = {ChatScreen}/>
     
       <Route path="/" 
       render = {

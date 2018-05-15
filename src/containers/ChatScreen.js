@@ -39,12 +39,17 @@ class ChatScreen extends Component{
         })
     }
     componentDidMount(){
-        let user = localStorage.getItem("user");
-        this.props.signedUser(user);
+        console.log(this.props.match)
+        let user_name_from_route  =  this.props.match.params.user_name;
+        this.props.signedUser(user_name_from_route);
+
+        this.setState({
+            user : user_name_from_route
+        })
         
         const chatManager = new ChatKit.ChatManager({
             instanceLocator: this.instance_locator,
-            userId : user,
+            userId : user_name_from_route,
             tokenProvider : new ChatKit.TokenProvider({
                 url:'http://localhost:3001/authenticate'
             })

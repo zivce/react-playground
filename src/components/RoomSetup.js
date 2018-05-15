@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import toastrcss from '../toastr.css';
 import toastr from 'toastr';
 
+//Font awesome
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import faWindowClose from '@fortawesome/fontawesome-free-solid/faWindowClose'
 
 
 //B3 comps
@@ -79,6 +82,17 @@ export default class RoomSetup extends Component{
                 height: "40vh",
                 overflow : "auto"
             },
+            input_room: {
+                color : "black"
+            },
+            fa_window_close : {
+                cursor : "pointer",
+                float: "right",
+                marginTop: "-24%",
+                color: "red",
+                width: "20px",
+                height: "20px"
+            },
             check_users : {
                 textAlign : "center",
                 margin: "4px",
@@ -89,7 +103,8 @@ export default class RoomSetup extends Component{
 
         let users_check = this.props.users.map(user=>(
                 <div key = {user.id} style={styles.select_users}> 
-
+                    
+                    
                     <input 
                     onInput = {this.handleInputChange}
                     style = {styles.check_users}
@@ -105,9 +120,17 @@ export default class RoomSetup extends Component{
 
         return (
             <div style={styles.room_setup}>
+
                 <h3>Create room</h3>
+
+                <FontAwesomeIcon
+                onClick = {this.props.closeMe} 
+                style = {styles.fa_window_close} 
+                    icon = {faWindowClose}
+                />
                 <div>
                     <input 
+                    style = {styles.input_room}
                     type="text" 
                     onInput={this.handleRoomNameChange}/>
                     

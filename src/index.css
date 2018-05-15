@@ -12,7 +12,18 @@ body {
   opacity: 0;
   transition: visibility 0s 2s, opacity 2s linear;
 }
+.welcome_container
+{
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+}
 
+
+.username_container{
+  width: fit-content;
+  margin: auto;
+}
 .room_container
 {
   display:  none;

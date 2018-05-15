@@ -36,9 +36,11 @@ class WhosOnlineList extends Component{
         this.addRoom = this.addRoom.bind(this);
         this.new_room = ""
 
+
         this.fetchMessages = this.fetchMessages.bind(this);
         this.expandRoom = this.expandRoom.bind(this);
 
+        this.closeRoomSetup = this.closeRoomSetup.bind(this);
         
 
     }
@@ -85,6 +87,15 @@ class WhosOnlineList extends Component{
     componentDidMount(){
         
     }
+    closeRoomSetup () {
+        
+        this.setState({
+            room_setup : false
+        })
+        this.forceUpdate();
+        
+    }
+
     addRoom(arg_name,users)
     {
 
@@ -139,6 +150,7 @@ class WhosOnlineList extends Component{
         let arr = this.props.current_user.rooms;
         this.rooms = arr;
 
+        //TODO : Promeni ... 
         if(arr && this.run === 1){
             arr.forEach((room)=>{
                 this.props.addRoom(room);
@@ -174,6 +186,7 @@ class WhosOnlineList extends Component{
         {
             RoomSetupModal = 
                 <RoomSetup 
+                closeMe = {this.closeRoomSetup}
                 roomUpdater = {this.addRoom}
                 users = {this.props.users}/>
             
