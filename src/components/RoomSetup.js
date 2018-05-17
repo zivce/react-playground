@@ -14,7 +14,9 @@ export default class RoomSetup extends Component{
     constructor(props)
     {
         super(props);
-        this.room_name = "";
+        this.state = {
+            room_name : ''
+        }
         this.room_input_users = [];
         
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -27,20 +29,24 @@ export default class RoomSetup extends Component{
     submitInfo($event)
     {
         $event.preventDefault();
-        this.props.roomUpdater(this.room_name,this.room_input_users)
+        this.props.roomUpdater(this.state.room_name,this.room_input_users)
     }
    
     handleRoomNameChange($event)
     {
-        if(this.room_name.length > 15)
+
+        this.setState({
+            room_name : $event.target.value
+        })
+
+
+        if(this.state.room_name.length > 15)
         {
             toastr.error("Long name.","Error!",{
                 closeOnHover : true
             });
             return;
         }
-
-        this.room_name = $event.target.value; 
     }
     handleInputChange($event)
     {
@@ -108,7 +114,6 @@ export default class RoomSetup extends Component{
                     <input 
                     onInput = {this.handleInputChange}
                     style = {styles.check_users}
-                    
                     name={user.id} 
                     value={user.name}
                     type="checkbox">
@@ -132,8 +137,9 @@ export default class RoomSetup extends Component{
                     <input 
                     style = {styles.input_room}
                     type="text" 
-                    onInput={this.handleRoomNameChange}/>
-                    
+                    onInput={this.handleRoomNameChange}
+                    value = {this.state.room_name}/>
+                   
                     <div style={styles.users_container}>
                         {users_check}                    
                     </div>

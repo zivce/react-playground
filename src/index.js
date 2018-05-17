@@ -8,15 +8,20 @@ import { BrowserRouter } from 'react-router-dom';
 import {Provider} from 'react-redux';
 import {createStore , combineReducers, applyMiddleware,compose } from 'redux';
 import reducers from './reducers/index';
+import createSagaMiddleware from 'redux-saga';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
+import saga from './saga';
 
 // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 
+const sagaMiddleware = createSagaMiddleware();
+
+
 const store = createStore (
-    reducers,applyMiddleware(logger)
+    reducers,
+    applyMiddleware(sagaMiddleware,logger)
 )
+sagaMiddleware.run(saga);
 
 ReactDOM.render(
 

@@ -39,7 +39,6 @@ class ChatScreen extends Component{
         })
     }
     componentDidMount(){
-        console.log(this.props.match)
         let user_name_from_route  =  this.props.match.params.user_name;
         this.props.signedUser(user_name_from_route);
 

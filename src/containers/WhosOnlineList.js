@@ -7,6 +7,7 @@ import addRoom from '../components/actions/new_room.action';
 import addMsgs from '../components/actions/add_messages.action';
 import refreshMsgs from '../components/actions/refresh_messages.action';
 import currRoom from '../components/actions/current_room.action';
+import fetchConcurrent from '../components/actions/fetch_concurrent.action';
 
 //Font awesome icons
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
@@ -69,18 +70,24 @@ class WhosOnlineList extends Component{
 
     fetchMessages(roomid)
     {
+
+
         this.props.refreshMsgs();
         this.props.currRoom(roomid);
-
+        
+        // this.props.fetchConcurrent(roomid, this.props.current_user);
+        
         this.props.current_user.subscribeToRoom({
             roomId : roomid,
             hooks : {
                 onNewMessage : message => {
-                    this.props.addMsgs(message);
+                   this.props.fetchConcurrent(message)
                 }
             }
         })
     }
+
+
     createRoom(){
        this.setState({room_setup:true})
     }
@@ -99,6 +106,7 @@ class WhosOnlineList extends Component{
     addRoom(arg_name,users)
     {
 
+
         if(arg_name==="")
         {
             toastr.error("Insert name","Error!",{
@@ -108,11 +116,15 @@ class WhosOnlineList extends Component{
         }
 
         let th = this;
-        this.props.current_user.createRoom({
-            name: arg_name,
-            private: true,
-            addUserIds: users
-            }).then(room => {
+        this.props.current_user
+        
+            .createRoom({
+                name: arg_name,
+                private: true,
+                addUserIds: users
+                })
+            
+            .then(room => {
                 
                 th.props.addRoom(room);
                 this.props.refreshMsgs();
@@ -321,7 +333,7 @@ function mapDispatchToProps(dispatch)
         currRoom,
        addRoom,
        refreshMsgs,
-       addMsgs
+       addMsgs,fetchConcurrent
     },dispatch)
 }
 export default connect(mapStateToProps,mapDispatchToProps)(WhosOnlineList);

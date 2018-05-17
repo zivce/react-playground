@@ -26,7 +26,6 @@ class MessageList extends Component{
             },
             message : {fontSize: 15}
         }
-        console.log(this.props);
 
         if(this.props.messages)
             return (
