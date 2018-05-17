@@ -19,8 +19,10 @@ const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore (
     reducers,
-    applyMiddleware(sagaMiddleware,logger)
+    applyMiddleware(sagaMiddleware)
 )
+
+
 sagaMiddleware.run(saga);
 
 ReactDOM.render(

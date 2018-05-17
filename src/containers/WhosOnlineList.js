@@ -75,7 +75,6 @@ class WhosOnlineList extends Component{
         this.props.refreshMsgs();
         this.props.currRoom(roomid);
         
-        // this.props.fetchConcurrent(roomid, this.props.current_user);
         
         this.props.current_user.subscribeToRoom({
             roomId : roomid,
@@ -83,7 +82,9 @@ class WhosOnlineList extends Component{
                 onNewMessage : message => {
                    this.props.fetchConcurrent(message)
                 }
-            }
+            },
+            //60 latest messages
+            messageLimit: 60
         })
     }
 

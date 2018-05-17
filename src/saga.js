@@ -1,37 +1,27 @@
 import { call, put, take, fork,select } from 'redux-saga/effects'
+import { takeEvery} from "redux-saga/effects"
 
 import addMsg from './components/actions/add_messages.action';
 import fetchConcurrent from './components/actions/fetch_concurrent.action';
 
-
-//Worker sagas 
+//Worker saga
 function * fetchMessage()
 {
     while(true)
     {        
-        const msg = yield take(fetchConcurrent);
+        const fetch_conc_rrent = yield take('FETCH_CONCURRENT');
 
-        const msgs = yield select(state => state.messages)
+        const msgs = yield put({
+            type:'ADD_MESSAGES',
+            message: fetch_conc_rrent.msg
+        });
         
-        console.group("fetch message")
-            console.log("from fetch messages", msgs);
-            console.log("from fetch messages fetch concurrent", msg);
-        console.groupEnd()
 
     }
 }
 
 
-// //Bundler saga
-// function* rootSaga() {
-//     yield [
-//         fork(fetchMessage),
-//         take()
-        
-//     ]
-    
-// }
-
+//Bundler saga
 function * rootSaga () {
     yield fetchMessage()
 }

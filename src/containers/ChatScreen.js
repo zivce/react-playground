@@ -11,6 +11,7 @@ import signedUser from '../components/actions/user_signed.action';
 import refreshMsgs from '../components/actions/refresh_messages.action';
 import addMsgs from '../components/actions/add_messages.action';
 import currRoom from '../components/actions/current_room.action';
+import fetchConcurrent from '../components/actions/fetch_concurrent.action';
 
 
 class ChatScreen extends Component{
@@ -84,7 +85,11 @@ class ChatScreen extends Component{
                         onUserJoined : () => this.forceUpdate(),
 
                         onNewMessage: message => {
-                            this.props.addMsgs(message);
+                            
+                            //2 sec faster load time 58 msgs
+                            this.props.fetchConcurrent(message);
+                            
+                            //this.props.addMsgs(message);
                         }
                     }
                 })
@@ -140,7 +145,6 @@ class ChatScreen extends Component{
                 <div style={styles.chatContainer}>
                     
                     <aside style={styles.whosOnlineContainer}>
-                        <h2>Whos online</h2>
                         <WhosOnlineContainer
                         room = {this.state.curr_room_id}
                         current_user = {this.state.currentUser}
@@ -178,7 +182,8 @@ function mapDispatchToProps(dispatch)
         currRoom,
         signedUser,
         addMsgs,
-        refreshMsgs
+        refreshMsgs,
+        fetchConcurrent
     },dispatch)
 }
 
